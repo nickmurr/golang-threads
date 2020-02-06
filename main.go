@@ -34,7 +34,6 @@ func main() {
 		}(v, c)
 
 	}
-	//
 
 	parser.WriteToFile(len(records), c)
 
