@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/tealeg/xlsx"
+	"log"
+	"os"
+	"path/filepath"
 	"time"
 	"web-scraper/handlers"
 	"web-scraper/parser"
@@ -13,6 +15,12 @@ var (
 )
 
 func main() {
+	newpath := filepath.Join(".", "dist")
+	err := os.MkdirAll(newpath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	guard := make(chan struct{}, maxGoroutines)
 	defer handlers.TimeTrack(time.Now(), true)
 
@@ -29,43 +37,7 @@ func main() {
 	}
 	//
 
-	out := WriteToFile(len(records), c)
+	out := parser.WriteToFile(len(records), c)
 	fmt.Println(out)
-
-}
-
-func WriteToFile(length int, c chan parser.ChanUrls) []parser.ChanUrls {
-	// var out []parser.ChanUrls
-	var file *xlsx.File
-	var sheet *xlsx.Sheet
-	var row *xlsx.Row
-	// var cell *xlsx.Cell
-	var err error
-
-	file = xlsx.NewFile()
-	sheet, err = file.AddSheet("Sheet1")
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	for i := 0; i < length; i++ {
-		x:=<-c
-		row = sheet.AddRow()
-
-		_URL := row.AddCell()
-		_Size := row.AddCell()
-		_Time := row.AddCell()
-
-		_URL.Value = x.Url
-		_Size.Value = fmt.Sprint(x.Bytes)
-		_Time.Value = fmt.Sprint(x.Time)
-	}
-
-	err = file.Save(fmt.Sprintf("./output/MyXLSXFile-%v.xlsx", time.Now().Unix()))
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	return nil
 
 }
