@@ -2,8 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/tealeg/xlsx"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +9,9 @@ import (
 	"net/url"
 	"time"
 	"web-scraper/handlers"
+
+	"github.com/google/uuid"
+	"github.com/tealeg/xlsx"
 )
 
 type ChanUrls struct {
@@ -31,7 +32,7 @@ func ReadBody(record string, c chan ChanUrls) {
 			return
 		}
 		bytes, err := ioutil.ReadAll(resp.Body)
-		if err == io.ErrUnexpectedEOF{
+		if err == io.ErrUnexpectedEOF {
 			fmt.Println("Unexpected EOF")
 			return
 		}
@@ -41,7 +42,7 @@ func ReadBody(record string, c chan ChanUrls) {
 		}
 		defer resp.Body.Close()
 		out := string(bytes)
-		track := handlers.TimeTrack(t, false)
+		track := handlers.TimeTrack(t, false, "")
 
 		fmt.Println(track)
 
@@ -66,7 +67,7 @@ func ReadBody(record string, c chan ChanUrls) {
 }
 
 func WriteToFile(length int, c chan ChanUrls) []ChanUrls {
-	defer handlers.TimeTrack(time.Now(), true)
+	defer handlers.TimeTrack(time.Now(), true, "Writing to file")
 	fmt.Println("started")
 	// var out []parser.ChanUrls
 	var file *xlsx.File
@@ -92,6 +93,7 @@ func WriteToFile(length int, c chan ChanUrls) []ChanUrls {
 
 	for i := 0; i < length; i++ {
 		x := <-c
+		fmt.Println("Created Row")
 		row = sheet.AddRow()
 
 		_URL := row.AddCell()
@@ -103,6 +105,7 @@ func WriteToFile(length int, c chan ChanUrls) []ChanUrls {
 		_Time.Value = fmt.Sprint(x.Time)
 	}
 
+	fmt.Println("Save to file")
 	err = file.Save(fmt.Sprintf("./dist/MyXLSXFile-%v.xlsx", time.Now().Unix()))
 	if err != nil {
 		fmt.Println(<-c)

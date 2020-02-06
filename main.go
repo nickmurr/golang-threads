@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,7 +10,7 @@ import (
 )
 
 var (
-	maxGoroutines = 10
+	maxGoroutines = 100
 )
 
 func main() {
@@ -22,7 +21,7 @@ func main() {
 	}
 
 	guard := make(chan struct{}, maxGoroutines)
-	defer handlers.TimeTrack(time.Now(), true)
+	defer handlers.TimeTrack(time.Now(), true, "Total scraping")
 
 	records := handlers.GetRecords()
 	c := make(chan parser.ChanUrls, len(records))
@@ -37,7 +36,6 @@ func main() {
 	}
 	//
 
-	out := parser.WriteToFile(len(records), c)
-	fmt.Println(out)
+	parser.WriteToFile(len(records), c)
 
 }
