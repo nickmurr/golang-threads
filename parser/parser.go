@@ -53,7 +53,7 @@ func ReadBody(record string, c chan ChanUrls) {
 			log.Fatal(err)
 		}
 
-		err = ioutil.WriteFile(fmt.Sprintf("dist/%s-%v.html", parse.Host, uuid.New()), htmlBody, 0666)
+		err = ioutil.WriteFile(fmt.Sprintf("dist/html/%s-%v.html", parse.Host, uuid.New()), htmlBody, 0666)
 		if err != nil {
 			log.Fatal(err)
 		}

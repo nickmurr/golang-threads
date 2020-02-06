@@ -14,7 +14,7 @@ var (
 )
 
 func main() {
-	newpath := filepath.Join(".", "dist")
+	newpath := filepath.Join(".", "dist/html")
 	err := os.MkdirAll(newpath, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
