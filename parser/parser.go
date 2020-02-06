@@ -2,18 +2,20 @@ package parser
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/tealeg/xlsx"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 	"web-scraper/handlers"
 )
 
 type ChanUrls struct {
 	Url   string
-	Bytes int
+	Bytes string
 	Time  string
 }
 
@@ -29,6 +31,10 @@ func ReadBody(record string, c chan ChanUrls) {
 			return
 		}
 		bytes, err := ioutil.ReadAll(resp.Body)
+		if err == io.ErrUnexpectedEOF{
+			fmt.Println("Unexpected EOF")
+			return
+		}
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -36,17 +42,31 @@ func ReadBody(record string, c chan ChanUrls) {
 		defer resp.Body.Close()
 		out := string(bytes)
 		track := handlers.TimeTrack(t, false)
+
 		fmt.Println(track)
+
+		htmlBody := []byte(out)
+
+		parse, err := url.Parse(record)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = ioutil.WriteFile(fmt.Sprintf("dist/%s-%v.html", parse.Host, uuid.New()), htmlBody, 0666)
+		if err != nil {
+			log.Fatal(err)
+		}
 		c <- ChanUrls{
-			Bytes: len(out),
+			Bytes: fmt.Sprint(len(out)),
 			Url:   record,
 			Time:  track,
 		}
+
 	}
 }
 
 func WriteToFile(length int, c chan ChanUrls) []ChanUrls {
-	defer handlers.TimeTrack(time.Now(),true)
+	defer handlers.TimeTrack(time.Now(), true)
 	fmt.Println("started")
 	// var out []parser.ChanUrls
 	var file *xlsx.File

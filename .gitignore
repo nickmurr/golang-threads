@@ -1,3 +1,8 @@
 output/
 dist/
 *.exe
+
+input3.xlsx
+input4.xlsx
+top-1m.csv
+.idea

@@ -9,7 +9,7 @@ import (
 )
 
 func GetRecords() []string {
-	xlFile, err := xlsx.OpenFile("input1.xlsx")
+	xlFile, err := xlsx.OpenFile("input2.xlsx")
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
 	}
@@ -18,9 +18,9 @@ func GetRecords() []string {
 	for _, sheet := range xlFile.Sheets {
 		for _, row := range sheet.Rows {
 			for _, cell := range row.Cells {
-				text := cell.String()
-				if len(text) > 1 {
-					records = append(records, strings.TrimSpace(text))
+					text := cell.String()
+					if len(text) > 1 {
+						records = append(records, strings.TrimSpace(text))
 				}
 			}
 		}

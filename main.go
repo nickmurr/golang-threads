@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	maxGoroutines = 100
+	maxGoroutines = 10
 )
 
 func main() {
