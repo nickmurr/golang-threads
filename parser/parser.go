@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -9,9 +10,9 @@ import (
 )
 
 type ChanUrls struct {
-	url   string
-	bytes int
-	time  string
+	Url   string
+	Bytes int
+	Time  string
 }
 
 func ReadBody(record string, c chan ChanUrls) {
@@ -30,13 +31,11 @@ func ReadBody(record string, c chan ChanUrls) {
 		defer resp.Body.Close()
 		out := string(bytes)
 		track := handlers.TimeTrack(t, false)
-
-		// fmt.Println("HTML:\n\n", string(bytes))
+		fmt.Println(track)
 		c <- ChanUrls{
-			bytes: len(out),
-			url:   record,
-			time:  track,
+			Bytes: len(out),
+			Url:   record,
+			Time:  track,
 		}
-		// fmt.Println(<-c)
 	}
 }
