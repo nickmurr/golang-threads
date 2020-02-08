@@ -4,16 +4,19 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 	"web-scraper/handlers"
 	"web-scraper/parser"
 )
 
 var (
-	maxGoroutines = 100
+	maxGoroutines = 40
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	newpath := filepath.Join(".", "dist/html")
 	err := os.MkdirAll(newpath, os.ModePerm)
 	if err != nil {
